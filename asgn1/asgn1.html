@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <title>WebGL Paint & Pong</title>
+</head>
+<body onload="main()">
+    <canvas id="webgl" width="400" height="400">Please use a browser supporting "canvas".</canvas>
+    
+    <p id="numdot">Dots: 0</p>
+    <h3 id="scoreCounter" style="color: rgb(110, 18, 24);">Score: 0</h3>
+
+    <button type="button" id="pointButton">Point</button>
+    <button type="button" id="triangleButton">Triangle</button>
+    <button type="button" id="circleButton">Circle</button>
+    <button type="button" id="pongButton" style="background: #9a148f;">Start Pong</button>
+
+    <p>
+    <button type="button" id="clear">Clear Canvas</button>
+    
+    <p>
+    Red <input type="range" min="0" max="100" class="slider" id="redslider">
+    Green <input type="range" min="0" max="100" class="slider" id="greenslider">
+    Blue <input type="range" min="0" max="100" class="slider" id="blueslider">
+    Size <input type="range" min="5" max="40" class="slider" id="sizeslider">
+    <p>
+    Draw 春 <input type="checkbox" id="spring">
+
+    <script src="lib/webgl-utils-lite.js"></script>
+    <!-- Include Class Files First -->
+    <script src="Points.js"></script>
+    <script src="Triangle.js"></script>
+    <script src="Circle.js"></script>
+    <script src="chun.js"></script>
+    <script src="Pong.js"></script>
+    <script src="ColoredPoints.js"></script>
+</body>
+</html>
