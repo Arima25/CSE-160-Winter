@@ -480,10 +480,11 @@ function renderScene() {
 
     // Foot (Child of Shin)
     var lFootMat = new Matrix4(lShinCoord);
-    lFootMat.translate(0.0, -0.5, 0.0); // Ankle position
+    lFootMat.translate(0.0, -0.25, 0.0); // Ankle position (aligned with end of shin)
     lFootMat.rotate(g_leftFootAngle, 1, 0, 0); // Ankle bend
+    lFootMat.translate(-0.045, 0, 0); // Center foot horizontally
     lFootMat.scale(0.09, 0.05, 0.15);
-    lFootMat.translate(0, 0, 0.5); // Extend foot forward
+    lFootMat.translate(0, 0, -0.5); // Extend foot forward (toward face)
     drawCube(lFootMat, C_BLACK);
 
     // Right Leg (Static for stability in this pose)
@@ -499,15 +500,20 @@ function renderScene() {
 
     // Shin - cylinder
     var rShinMat = new Matrix4(rThighCoord);
-    rShinMat.translate(0.0, -0.5, 0.0);
-    rShinMat.scale(0.09, 0.25, 0.09);
-    drawCylinder(rShinMat, C_GOLD, 10);
+    rShinMat.translate(0.0, -0.25, 0.0); // Knee position
+    var rShinCoord = new Matrix4(rShinMat); // Save shin frame
+    
+    var rShinDraw = new Matrix4(rShinCoord);
+    rShinDraw.translate(0.0, -0.25, 0.0);
+    rShinDraw.scale(0.09, 0.25, 0.09);
+    drawCylinder(rShinDraw, C_GOLD, 10);
 
-    // Foot - positioned below shin
-    var rFootMat = new Matrix4(rThighCoord);
-    rFootMat.translate(0.0, -0.75, 0.0);
+    // Foot - positioned below shin (Child of Shin)
+    var rFootMat = new Matrix4(rShinCoord);
+    rFootMat.translate(0.0, -0.25, 0.0); // Ankle position (aligned with end of shin)
+    rFootMat.translate(-0.045, 0, 0); // Center foot horizontally
     rFootMat.scale(0.09, 0.05, 0.15);
-    rFootMat.translate(0, 0, 0.5);
+    rFootMat.translate(0, 0, -0.5); // Extend foot forward (toward face)
     drawCube(rFootMat, C_BLACK);
 }
 
