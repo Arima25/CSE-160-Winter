@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <title>Sun Wukong - Lighting Demo</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #2b1010 0%, #1f1f1f 50%, #4a3b10 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            padding: 20px;
+        }
+
+        .container { display: flex; gap: 20px; align-items: flex-start; flex-wrap: wrap; }
+        .canvas-wrapper {
+            background: #0a0a0f; padding: 15px; border-radius: 16px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+        }
+        #webgl { display: block; border-radius: 8px; cursor: crosshair; }
+        .controls-wrapper { display: flex; gap: 20px; align-items: flex-start; flex-wrap: wrap; }
+        .controls, .joint-controls, .light-controls {
+            background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(10px);
+            padding: 20px; border-radius: 16px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            width: 220px; flex-shrink: 0;
+        }
+        h2, h3 { color: #d4af37; text-align: center; margin-bottom: 15px; text-transform: uppercase; letter-spacing: 2px; font-size: 0.9rem; }
+        .section { margin-bottom: 15px; }
+        .slider-group { margin-bottom: 12px; }
+        .slider-label { display: flex; justify-content: space-between; color: #ccc; font-size: 0.75rem; margin-bottom: 4px; }
+        input[type="range"] { width: 100%; cursor: pointer; height: 6px; }
+        .btn { 
+            padding: 8px; width: 48%; border: none; border-radius: 5px; 
+            background: #444; color: white; cursor: pointer; margin-bottom: 5px; 
+            text-transform: uppercase; font-size: 0.7rem;
+            display: inline-block;
+        }
+        .btn.full { width: 100%; }
+        .btn.active { background: #d4af37; color: #000; font-weight: bold; }
+        .btn-row { display: flex; justify-content: space-between; gap: 4px; margin-bottom: 8px; }
+        .fps-display {
+            position: fixed; top: 10px; left: 10px;
+            background: rgba(0, 0, 0, 0.7); color: #0f0; padding: 8px 12px;
+            border-radius: 6px; font-family: monospace; font-size: 14px;
+            z-index: 1000; border: 1px solid #0f0;
+        }
+        .fps-display.slow { color: #ff0; border-color: #ff0; }
+        .fps-display.bad { color: #f00; border-color: #f00; }
+        .divider { border-top: 1px solid rgba(255,255,255,0.1); margin: 15px 0; }
+    </style>
+</head>
+<body onload="main()">
+    <div class="fps-display" id="fpsDisplay">FPS: --</div>
+    <div class="container">
+        <div class="canvas-wrapper">
+            <canvas id="webgl" width="500" height="500">Please use a browser supporting "canvas".</canvas>
+        </div>
+
+        <div class="controls-wrapper">
+            <!-- Lighting Controls -->
+            <div class="light-controls">
+                <h2>Lighting</h2>
+                
+                <div class="section">
+                    <div class="slider-label"><span>Lighting</span></div>
+                    <div class="btn-row">
+                        <button type="button" class="btn active" id="lightingOnButton">ON</button>
+                        <button type="button" class="btn" id="lightingOffButton">OFF</button>
+                    </div>
+                </div>
+                
+                <div class="section">
+                    <div class="slider-label"><span>Normal Visualization</span></div>
+                    <div class="btn-row">
+                        <button type="button" class="btn" id="normalOnButton">ON</button>
+                        <button type="button" class="btn active" id="normalOffButton">OFF</button>
+                    </div>
+                </div>
+                
+                <div class="section">
+                    <div class="slider-label"><span>Light Animation</span></div>
+                    <div class="btn-row">
+                        <button type="button" class="btn active" id="lightAnimOnButton">ON</button>
+                        <button type="button" class="btn" id="lightAnimOffButton">OFF</button>
+                    </div>
+                </div>
+                
+                <div class="divider"></div>
+                
+                <div class="slider-group">
+                    <div class="slider-label"><span>Light X</span><span id="lightXValue">0</span></div>
+                    <input type="range" min="-5" max="5" value="0" step="0.1" id="lightXSlider">
+                </div>
+                <div class="slider-group">
+                    <div class="slider-label"><span>Light Y</span><span id="lightYValue">1</span></div>
+                    <input type="range" min="-5" max="5" value="1" step="0.1" id="lightYSlider">
+                </div>
+                <div class="slider-group">
+                    <div class="slider-label"><span>Light Z</span><span id="lightZValue">-2</span></div>
+                    <input type="range" min="-5" max="5" value="-2" step="0.1" id="lightZSlider">
+                </div>
+                
+                <div class="divider"></div>
+                
+                <div class="slider-group">
+                    <div class="slider-label"><span>Light Red</span><span id="lightRValue">1</span></div>
+                    <input type="range" min="0" max="1" value="1" step="0.05" id="lightRSlider">
+                </div>
+                <div class="slider-group">
+                    <div class="slider-label"><span>Light Green</span><span id="lightGValue">1</span></div>
+                    <input type="range" min="0" max="1" value="1" step="0.05" id="lightGSlider">
+                </div>
+                <div class="slider-group">
+                    <div class="slider-label"><span>Light Blue</span><span id="lightBValue">1</span></div>
+                    <input type="range" min="0" max="1" value="1" step="0.05" id="lightBSlider">
+                </div>
+                
+                <div class="divider"></div>
+                
+                <div class="section">
+                    <div class="slider-label"><span>Spotlight</span></div>
+                    <div class="btn-row">
+                        <button type="button" class="btn" id="spotlightOnButton">ON</button>
+                        <button type="button" class="btn active" id="spotlightOffButton">OFF</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Animation Controls -->
+            <div class="controls">
+                <h2>Animation</h2>
+                <div class="section">
+                    <div class="btn-row">
+                        <button type="button" class="btn active" id="animationOnButton">ON</button>
+                        <button type="button" class="btn" id="animationOffButton">OFF</button>
+                    </div>
+                </div>
+
+                <div class="slider-group">
+                    <div class="slider-label"><span>Camera Angle</span><span id="angleValue">0</span></div>
+                    <input type="range" min="-180" max="180" value="0" id="angleSlider">
+                </div>
+            </div>
+
+            <!-- Joint Controls -->
+            <div class="joint-controls">
+                <h3>Joints</h3>
+                <div class="slider-group">
+                    <div class="slider-label"><span>R. Arm (Shoulder)</span><span id="rightArmValue">0</span></div>
+                    <input type="range" min="-90" max="90" value="0" id="rightArmSlider">
+                </div>
+                <div class="slider-group">
+                    <div class="slider-label"><span>R. Arm (Elbow)</span><span id="rightForearmValue">0</span></div>
+                    <input type="range" min="-90" max="90" value="0" id="rightForearmSlider">
+                </div>
+                <div class="slider-group">
+                    <div class="slider-label"><span>L. Arm (Shoulder)</span><span id="leftArmValue">0</span></div>
+                    <input type="range" min="-90" max="90" value="0" id="leftArmSlider">
+                </div>
+                <div class="slider-group">
+                    <div class="slider-label"><span>L. Leg (Thigh)</span><span id="leftLegValue">0</span></div>
+                    <input type="range" min="-45" max="45" value="0" id="leftLegSlider">
+                </div>
+                <div class="slider-group">
+                    <div class="slider-label"><span>L. Leg (Knee)</span><span id="leftShinValue">0</span></div>
+                    <input type="range" min="0" max="90" value="0" id="leftShinSlider">
+                </div>
+                 <div class="slider-group">
+                    <div class="slider-label"><span>L. Foot (Ankle)</span><span id="leftFootValue">0</span></div>
+                    <input type="range" min="-30" max="30" value="0" id="leftFootSlider">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="lib/webgl-utils-lite.js"></script>
+    <script src="lib/cuon-matrix-cse160.js"></script>
+    <script src="Triangle.js"></script>
+    <script src="cube.js"></script>
+    <script src="Sphere.js"></script>
+    <script src="OBJLoader.js"></script>
+    <script src="lighting.js"></script>
+</body>
+</html>

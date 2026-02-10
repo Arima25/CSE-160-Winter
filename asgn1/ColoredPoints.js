@@ -177,3 +177,5 @@ function addActionForHtmlUI(){
     document.getElementById('blueslider').oninput = function() { g_selectedColor[2] = this.value/100.0; };
     document.getElementById('sizeslider').oninput = function() { gSelectedSize = parseFloat(this.value); };
 }
+
+
